@@ -42,8 +42,10 @@
 | --- | --- | --- |
 | `SPSDAB` | 单移相 SPS | `SPSCTRL()` |
 | `EPSDAB` | 扩展移相 EPS | `EPSCTRL()` |
-| `TPSDAB` | 三重移相 TPS | 当前未实现 |
+| `TPSDAB` | 三重移相 TPS | 当前未实现，会退回 `SPSCTRL(0.0f)` |
 | `BDPSOPTDAB` | BDPS 优化调制 | `BDPSOPTCTRL()` |
+
+如果 `CtrlMode` 配置成未知值，代码也会输出 `SPSCTRL(0.0f)`，避免 PWM 继续保持上一拍相角。
 
 ### 1.2 功率方向 `CtrlLoopTransmissionMode`
 
@@ -63,6 +65,15 @@
 | `VMode` | 单电压环 | 电压 PI 输出直接作为调制输入 |
 | `IMode` | 单电流环 | 电流 PI 输出直接作为调制输入 |
 | `VIMode` | 电压外环 + 电流内环 | 电压 PI 输出作为电流参考，再进电流 PI |
+
+`VIMode` 是串级环，电流环是快环，电压环是慢环。当前代码里：
+
+```c
+gControlCurrentLoopTsSec = 10.0e-6f;
+gControlVoltageLoopDiv = 10U;
+```
+
+意思是电流环每个 ADC ISR 都运行，电压环每 10 个电流环周期运行一次。电压 PI 没到更新周期时，`VoltageLoopOut` 保持上一次的值，电流环继续用这个值作为电流参考。
 
 ---
 
@@ -176,6 +187,8 @@ SoftStep = target * gControlCurrentLoopTsSec / SoftTime;
 
 所以不要再手动写死 `100000` 这种频率数字。
 
+如果软启动处在 `VIMode`，软启动目标仍然每个电流环周期爬坡，但电压外环不会每拍都算。它会按 `gControlVoltageLoopDiv` 分频更新，电流内环每拍运行，这样软启动和正常运行的串级环节奏一致。
+
 ### 4.3 运行中目标变化怎么更新
 
 如果你在程序里改了目标值，把状态设成 `DABWAITCHANGE`：
@@ -221,7 +234,7 @@ ControlLoop_runMainCtrl(&DABCtrl);
 | --- | --- | --- |
 | `VMode` | `gAdcCActual[2]` 副边电压 | 电压 PI 输出进调制 |
 | `IMode` | `gAdcCActual[0]` 副边电流 | 电流 PI 输出进调制 |
-| `VIMode` | 副边电压外环 + 副边电流内环 | 电流 PI 输出进调制 |
+| `VIMode` | 副边电压外环 + 副边电流内环 | 电压外环每 10 拍更新电流参考，电流内环每拍输出进调制 |
 
 ### 5.2 S2P 的控制逻辑
 
@@ -229,7 +242,7 @@ ControlLoop_runMainCtrl(&DABCtrl);
 | --- | --- | --- |
 | `VMode` | `gAdcDActual[1]` 原边电压 | 电压 PI 输出取负后进调制 |
 | `IMode` | `gAdcCActual[0]` 副边电流 | 电流参考取负后进 PI |
-| `VIMode` | 原边电压外环 + 副边电流内环 | 电压环输出取负后作为电流参考 |
+| `VIMode` | 原边电压外环 + 副边电流内环 | 电压外环每 10 拍更新，输出取负后作为电流参考 |
 
 ---
 
@@ -373,7 +386,16 @@ DABCtrl.CurrentLoopOut
 gAdcCActual[0]
 gAdcCActual[2]
 gAdcDActual[1]
+DABCSS.error
+DABOverload.Overload_PrimarySide_TrankCurrent
+DABOverload.Overload_SecondSide_TrankCurrent
+DABOverload.Overload_PrimarySide_InputCurrent
+DABOverload.Overload_SecondSide_InputCurrent
+DABOverload.Overload_PrimarySide_Voltage
+DABOverload.Overload_SecondSide_Voltage
 ```
+
+`DABOverload` 是软件过流/过压保护阈值。ADC ISR 每拍换算完实际值后会先检查六个采样值，超限后写 `DABCSS.error`，状态切到 `DABERROR`，并通过 `Board_EPWM_forceLowAll()` 触发软件 TripZone 拉闸。
 
 BDPS 建议额外观察：
 
@@ -404,6 +426,7 @@ gBdpsLast.err_flags
 5. PI 输出限幅是否适合当前模式。
 6. P2S/S2P 方向是否和硬件接线、采样符号一致。
 7. 示波器确认四路 PWM 相位关系，再逐步加目标电压/电流。
+8. `DABOverload` 六个保护阈值是否按真实硬件设置，确认故障时 ePWM 会被 TripZone 拉低。
 
 ---
 
@@ -419,4 +442,3 @@ gBdpsLast.err_flags
 - BDPS 公式本身。
 
 如果只是改控制目标、方向、模式、软启动时间、PI 参数，优先改 `ControlLoop.c` 和 `ControlLoop.h`。
-
