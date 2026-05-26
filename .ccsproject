@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVariant value="50:Theia-based"/>
+	<ccsVersion value="70.5.1"/>
+	<deviceFamily value="C2000"/>
+	<executableActions value=""/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=empty_bitfield_driverlib.projectspec.F28388Test"/>
+	<origin value="D:\Ti\ccs2051\C2000Ware_26_00_00_00\device_support\f2838x\examples\cpu1\empty_projects\CCS\empty_bitfield_driverlib.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>
