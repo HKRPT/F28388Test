@@ -1,8 +1,8 @@
 # F28388Test 控制层说明
 
-这个目录放的是 DAB 双有源桥的“应用控制代码”。如果你只是想改目标电压、目标电流、功率方向、控制模式、软启动时间、PI 参数，大多数情况下只需要看这个目录，不需要改 `board/`、`device/`、`driverlib/` 里的底层代码。
+这个目录放的是 DAB 双有源桥的“应用控制代码”。如果你只是想改目标电压、目标电流、功率方向、控制模式、软启动时间、PI 参数，大多数情况下只需要看这个目录，不需要改 `board/`、`device/`、`driverlib/` 里的驱动代码。
 
-请优先看这几个文件：
+请优先看这几个控制层的文件：
 
 | 文件 | 作用 |
 | --- | --- |
@@ -15,7 +15,7 @@
 
 ## 图文速览
 
-先看这张总图，就能知道控制代码每个部分大概在链路里的位置。
+看一下控制总图，就能知道控制代码每个部分在代码啥位置。
 
 ![DAB 控制闭环总览](docs/control_loop_overview.svg)
 
@@ -84,7 +84,7 @@ gAdcDActual[2] = Primary Side Current       // 原边输入电流
 
 ---
 
-## 3. 程序运行链路
+## 3. 控制链路
 
 每个 PWM 周期会触发 ADC，ADC 中断进入控制代码。
 
@@ -116,7 +116,7 @@ EPWM9 SOCA 触发 ADC
 
 ---
 
-## 4. 软启动怎么工作
+## 4. 软启动
 
 软启动函数是：
 
@@ -146,7 +146,7 @@ ControlLoop_configSoftStart(&DABCtrl);
 
 规则是：
 
-| 闭环模式 | 软启动爬坡目标 |
+| 闭环模式 | 软启动目标值 |
 | --- | --- |
 | `VMode` | `TargetVoltage` |
 | `IMode` | `TargetCurrent` |
@@ -233,7 +233,7 @@ ControlLoop_runMainCtrl(&DABCtrl);
 
 ---
 
-## 6. 常见修改方法
+## 6. 常见修改方法和修改的地方
 
 ### 6.1 改成 48V 输出，P2S，SPS，单电压环
 
@@ -407,7 +407,7 @@ gBdpsLast.err_flags
 
 ---
 
-## 10. 不建议新手改的地方
+## 10. 不建议改的地方
 
 这些地方除非明确知道原因，否则不要改：
 
@@ -420,16 +420,3 @@ gBdpsLast.err_flags
 
 如果只是改控制目标、方向、模式、软启动时间、PI 参数，优先改 `ControlLoop.c` 和 `ControlLoop.h`。
 
----
-
-## 11. 构建说明
-
-本工程是 CCS 工程。推荐通过 CCS 构建 `F28388Test`。
-
-当前用 TI 编译器单独编译 `ControlLoop.c` 已通过，只剩性能提示：
-
-```text
-#2614-D: Use --fp_mode=relaxed to enable TMU hardware support for FP division
-```
-
-这个提示不是功能错误，只是建议打开硬件浮点除法优化。
