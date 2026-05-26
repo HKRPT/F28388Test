@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="720" viewBox="0 0 1180 720">
+  <defs>
+    <style>
+      .title { font: 700 28px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .h { font: 700 18px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .t { font: 15px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #253047; }
+      .s { font: 13px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #566176; }
+      .box { fill: #ffffff; stroke: #90a4c4; stroke-width: 1.5; rx: 8; }
+      .blue { fill: #eaf3ff; stroke: #4d88c7; }
+      .green { fill: #eaf8ef; stroke: #56a36b; }
+      .amber { fill: #fff5dd; stroke: #c9932d; }
+      .red { fill: #fff0f0; stroke: #c85e5e; }
+      .gray { fill: #f6f7fb; stroke: #aab2c1; }
+      .arrow { stroke: #44536a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #7b879b; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#44536a" />
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1180" height="720" fill="#f4f7fb"/>
+  <text x="38" y="48" class="title">DAB 控制闭环总览</text>
+  <text x="40" y="78" class="s">从 PWM 触发采样开始，到软启动、闭环 PI、调制算法、PWM 相位输出的完整链路。</text>
+
+  <rect x="40" y="115" width="170" height="70" class="box blue"/>
+  <text x="62" y="145" class="h">EPWM9 SOCA</text>
+  <text x="62" y="169" class="s">触发 ADC 采样</text>
+
+  <rect x="260" y="115" width="170" height="70" class="box blue"/>
+  <text x="296" y="145" class="h">ADC 采样</text>
+  <text x="282" y="169" class="s">更新实际电压电流</text>
+
+  <rect x="480" y="115" width="220" height="70" class="box blue"/>
+  <text x="508" y="145" class="h">ControlLoop_adcISR()</text>
+  <text x="520" y="169" class="s">控制逻辑入口</text>
+
+  <rect x="755" y="105" width="360" height="90" class="box amber"/>
+  <text x="782" y="137" class="h">DABWAITCHANGE</text>
+  <text x="782" y="163" class="t">只同步 TempTarget 到控制目标</text>
+  <text x="782" y="184" class="s">运行中改目标值不重新软启动、不清 PI 积分</text>
+
+  <path d="M210 150 H260" class="arrow"/>
+  <path d="M430 150 H480" class="arrow"/>
+  <path d="M700 150 H755" class="arrow"/>
+
+  <rect x="92" y="265" width="220" height="95" class="box green"/>
+  <text x="122" y="297" class="h">DABREADYRUN</text>
+  <text x="122" y="323" class="t">DABSoftStar()</text>
+  <text x="122" y="345" class="s">上电阶段目标值从 0 慢慢爬坡</text>
+
+  <rect x="372" y="265" width="220" height="95" class="box green"/>
+  <text x="414" y="297" class="h">DABRUNING</text>
+  <text x="414" y="323" class="t">ControlLoop_runMainCtrl()</text>
+  <text x="414" y="345" class="s">软启动完成后进入正常闭环</text>
+
+  <rect x="680" y="245" width="190" height="135" class="box gray"/>
+  <text x="718" y="278" class="h">闭环模式</text>
+  <text x="716" y="307" class="t">VMode：电压 PI</text>
+  <text x="716" y="333" class="t">IMode：电流 PI</text>
+  <text x="716" y="359" class="t">VIMode：电压外环 + 电流内环</text>
+
+  <rect x="920" y="245" width="210" height="135" class="box gray"/>
+  <text x="960" y="278" class="h">调制方式</text>
+  <text x="960" y="307" class="t">SPSDAB：SPSCTRL()</text>
+  <text x="960" y="333" class="t">EPSDAB：EPSCTRL()</text>
+  <text x="960" y="359" class="t">BDPSOPTDAB：BDPSOPTCTRL()</text>
+
+  <path d="M590 185 C520 225 350 220 245 265" class="arrow"/>
+  <path d="M312 313 H372" class="arrow"/>
+  <path d="M592 313 H680" class="arrow"/>
+  <path d="M870 313 H920" class="arrow"/>
+
+  <rect x="70" y="470" width="210" height="105" class="box"/>
+  <text x="105" y="503" class="h">目标值</text>
+  <text x="102" y="530" class="t">TempTargetVoltage</text>
+  <text x="102" y="553" class="t">TempTargetCurrent</text>
+
+  <rect x="355" y="455" width="230" height="135" class="box"/>
+  <text x="405" y="488" class="h">PI 控制器</text>
+  <text x="400" y="518" class="t">VPI：电压误差 -> 相角/电流参考</text>
+  <text x="400" y="545" class="t">IPI：电流误差 -> 调制输入</text>
+  <text x="400" y="572" class="s">运行中改目标值时积分保持</text>
+
+  <rect x="670" y="455" width="230" height="135" class="box"/>
+  <text x="710" y="488" class="h">PWM 相位输出</text>
+  <text x="706" y="518" class="t">Board_EPWM_setAllPhaseDeg()</text>
+  <text x="706" y="545" class="t">更新四桥臂相位</text>
+  <text x="706" y="572" class="s">最终作用到 DAB 功率级</text>
+
+  <rect x="955" y="455" width="160" height="135" class="box red"/>
+  <text x="1000" y="488" class="h">DAB</text>
+  <text x="987" y="518" class="t">原边/副边全桥</text>
+  <text x="987" y="545" class="t">变压器与电感</text>
+  <text x="987" y="572" class="s">电压、电流再被 ADC 采回</text>
+
+  <path d="M280 523 H355" class="arrow"/>
+  <path d="M585 523 H670" class="arrow"/>
+  <path d="M900 523 H955" class="arrow"/>
+  <path d="M1035 455 C1035 408 1035 415 1035 380" class="dash"/>
+  <path d="M955 590 C690 675 265 650 175 575" class="dash"/>
+
+  <text x="72" y="640" class="s">P2S：通常用副边电压/电流反馈。S2P：电压反馈切到原边，调制输入或电流参考按方向取负。</text>
+</svg>

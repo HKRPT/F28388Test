@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680">
+  <defs>
+    <style>
+      .title { font: 700 27px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .h { font: 700 18px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .t { font: 15px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #253047; }
+      .s { font: 13px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #566176; }
+      .box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.5; rx: 8; }
+      .blue { fill: #eaf3ff; stroke: #4d88c7; }
+      .green { fill: #eaf8ef; stroke: #56a36b; }
+      .amber { fill: #fff5dd; stroke: #c9932d; }
+      .violet { fill: #f2edff; stroke: #8167c7; }
+      .gray { fill: #f8fafc; stroke: #aab2c1; }
+      .arrow { stroke: #44536a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #778399; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#44536a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="680" fill="#f4f7fb"/>
+  <text x="36" y="48" class="title">SPS / EPS / BDPS 调制算法入口</text>
+  <text x="38" y="78" class="s">闭环 PI 只负责给出调制输入；真正的相位组合由 CtrlMode 选择的算法函数完成。</text>
+
+  <rect x="55" y="115" width="250" height="105" class="box blue"/>
+  <text x="88" y="151" class="h">ControlLoop_runMainCtrl()</text>
+  <text x="90" y="181" class="t">按 P2S/S2P 和 LoopMode</text>
+  <text x="90" y="204" class="s">计算 VoltageLoopOut / CurrentLoopOut</text>
+
+  <rect x="380" y="115" width="255" height="105" class="box blue"/>
+  <text x="425" y="151" class="h">ControlLoop_applyOutput()</text>
+  <text x="420" y="181" class="t">根据 DABCSS.CtrlMode</text>
+  <text x="420" y="204" class="s">选择 SPS / EPS / BDPS</text>
+
+  <path d="M305 168 H380" class="arrow"/>
+
+  <rect x="740" y="80" width="340" height="95" class="box green"/>
+  <text x="780" y="115" class="h">SPSDAB：SPSCTRL(OutDeg)</text>
+  <text x="780" y="144" class="t">OutDeg 限幅到 ±SPS_PHASE_MAX_DEG</text>
+  <text x="780" y="166" class="s">原边和副边只使用一个外移相角</text>
+
+  <rect x="740" y="250" width="340" height="110" class="box amber"/>
+  <text x="780" y="285" class="h">EPSDAB：EPSCTRL(OutDeg)</text>
+  <text x="780" y="314" class="t">根据 m = U2 / (n * U1) 分配内移相</text>
+  <text x="780" y="338" class="s">生成 PInnerDeg、SInnerDeg、OutDeg</text>
+
+  <rect x="740" y="455" width="340" height="125" class="box violet"/>
+  <text x="780" y="490" class="h">BDPSOPTDAB：BDPSOPTCTRL(D2_in)</text>
+  <text x="780" y="519" class="t">D2_in 通常来自电压 PI 输出</text>
+  <text x="780" y="543" class="s">再由 BDPS_CalcD1_Optimized() 算 D1</text>
+  <text x="780" y="566" class="s">注意：BDPS 本身不是电压环或电流环</text>
+
+  <path d="M635 160 C675 118 700 115 740 125" class="arrow"/>
+  <path d="M635 168 C688 230 705 280 740 300" class="arrow"/>
+  <path d="M635 178 C682 370 700 470 740 515" class="arrow"/>
+
+  <rect x="65" y="330" width="255" height="160" class="box gray"/>
+  <text x="105" y="365" class="h">闭环输入来源</text>
+  <text x="103" y="397" class="t">VMode：目标电压 - 反馈电压</text>
+  <text x="103" y="425" class="t">IMode：目标电流 - 反馈电流</text>
+  <text x="103" y="453" class="t">VIMode：电压 PI 输出作电流参考</text>
+  <text x="103" y="477" class="s">P2S/S2P 决定反馈点和符号</text>
+
+  <rect x="410" y="340" width="250" height="150" class="box gray"/>
+  <text x="462" y="375" class="h">BDPS 采样量</text>
+  <text x="450" y="407" class="t">U1 = gAdcDActual[1]</text>
+  <text x="450" y="433" class="t">U2 = gAdcCActual[2]</text>
+  <text x="450" y="459" class="t">I2 = gAdcCActual[0]</text>
+  <text x="450" y="482" class="s">参数：n、Lseries、Fsw</text>
+
+  <path d="M320 410 H410" class="dash"/>
+  <path d="M660 415 C690 440 710 485 740 520" class="dash"/>
+
+  <rect x="420" y="565" width="360" height="72" class="box"/>
+  <text x="475" y="596" class="h">统一输出到底层 PWM</text>
+  <text x="466" y="622" class="t">Board_EPWM_setAllPhaseDeg(PInnerDeg, SInnerDeg, OutDeg)</text>
+
+  <path d="M910 175 C910 255 760 515 710 565" class="dash"/>
+  <path d="M910 360 C900 455 810 530 710 565" class="dash"/>
+  <path d="M910 580 C840 610 820 610 780 610" class="arrow"/>
+</svg>

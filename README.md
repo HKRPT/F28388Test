@@ -13,6 +13,23 @@
 
 ---
 
+## 图文速览
+
+先看这张总图，就能知道控制代码每个部分大概在链路里的位置。
+
+![DAB 控制闭环总览](docs/control_loop_overview.svg)
+
+这张图可以这样读：
+
+1. `EPWM9 SOCA` 定时触发 ADC 采样；
+2. ADC 采样结果进入 `ControlLoop_adcISR()`；
+3. 如果只是改目标电压或目标电流，ISR 只同步新目标，不重新软启动；
+4. 上电阶段由 `DABSoftStar()` 慢慢爬坡；
+5. 软启动结束后进入 `ControlLoop_runMainCtrl()`；
+6. 主控制函数先看功率方向，再看闭环模式，最后选择 SPS/EPS/BDPS 调制算法输出 PWM 相角。
+
+---
+
 ## 1. 先理解三个选择
 
 控制代码里有三个最重要的“选择开关”。
@@ -81,6 +98,10 @@ EPWM9 SOCA 触发 ADC
     -> 软启动完成后进入正常运行
     -> 主控制逻辑计算相角
 ```
+
+状态切换关系如下图。最容易看错的一点是：`DABWAITCHANGE` 现在不是“重新软启动”的意思，而是“下一次 ISR 同步新目标值”。
+
+![软启动与运行状态机](docs/state_flow.svg)
 
 核心状态如下：
 
@@ -296,6 +317,10 @@ BDPS_CalcD1_Optimized(U1, U2, I2, D2_in, &gBdpsLast);
 ```
 
 注意它本身不是电压环，也不是电流环。它只是根据当前采样和传入的 `D2_in` 计算内移相 `D1`。
+
+三种调制算法在主控制里的关系如下：
+
+![SPS / EPS / BDPS 调制算法入口](docs/modulation_algorithms.svg)
 
 当前代码允许 `BDPSOPTDAB` 从主控制逻辑接收不同闭环模式的输出，但实际最推荐先这样调：
 

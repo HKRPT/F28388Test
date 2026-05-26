@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="560" viewBox="0 0 1080 560">
+  <defs>
+    <style>
+      .title { font: 700 27px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .h { font: 700 18px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #172033; }
+      .t { font: 15px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #253047; }
+      .s { font: 13px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #566176; }
+      .box { fill: #fff; stroke: #94a3b8; stroke-width: 1.6; rx: 9; }
+      .ready { fill: #eaf8ef; stroke: #4d9f67; }
+      .run { fill: #eaf3ff; stroke: #4d88c7; }
+      .wait { fill: #fff5dd; stroke: #c9932d; }
+      .err { fill: #fff0f0; stroke: #c85e5e; }
+      .arrow { stroke: #44536a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #778399; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#44536a"/>
+    </marker>
+  </defs>
+
+  <rect width="1080" height="560" fill="#f4f7fb"/>
+  <text x="36" y="48" class="title">软启动与运行状态机</text>
+  <text x="38" y="78" class="s">目标值变化只同步新目标；真正重新软启动只发生在初始化或显式重新配置软启动时。</text>
+
+  <rect x="70" y="150" width="210" height="105" class="box ready"/>
+  <text x="110" y="184" class="h">DABREADYRUN</text>
+  <text x="105" y="213" class="t">软启动允许运行</text>
+  <text x="105" y="237" class="s">SoftTemp 从 0 爬到 SoftTarget</text>
+
+  <rect x="365" y="150" width="230" height="105" class="box ready"/>
+  <text x="420" y="184" class="h">DABSoftStar()</text>
+  <text x="410" y="213" class="t">默认用 SPS 软启动</text>
+  <text x="410" y="237" class="s">按 P2S/S2P 和 LoopMode 选择反馈</text>
+
+  <rect x="690" y="150" width="230" height="105" class="box run"/>
+  <text x="745" y="184" class="h">DABRUNING</text>
+  <text x="735" y="213" class="t">主闭环接管</text>
+  <text x="735" y="237" class="s">调用 ControlLoop_runMainCtrl()</text>
+
+  <path d="M280 202 H365" class="arrow"/>
+  <path d="M595 202 H690" class="arrow"/>
+  <text x="615" y="188" class="s">SoftSTS == SoftOver</text>
+
+  <rect x="260" y="345" width="290" height="115" class="box wait"/>
+  <text x="312" y="381" class="h">DABWAITCHANGE</text>
+  <text x="304" y="410" class="t">同步 TempTargetVoltage / Current</text>
+  <text x="304" y="434" class="s">保留 PI 积分、当前相角和软启动完成状态</text>
+
+  <path d="M805 255 C805 328 650 360 550 387" class="dash"/>
+  <text x="715" y="333" class="s">运行中改目标值</text>
+  <path d="M550 402 C655 377 765 335 805 255" class="arrow"/>
+  <text x="700" y="393" class="s">SoftOver 后回到 DABRUNING</text>
+
+  <path d="M360 345 C260 315 170 295 170 255" class="dash"/>
+  <text x="112" y="318" class="s">软启动中改目标值</text>
+  <path d="M330 460 C165 430 128 330 170 255" class="arrow"/>
+  <text x="75" y="425" class="s">未 SoftOver 时继续 DABREADYRUN</text>
+
+  <rect x="735" y="350" width="230" height="95" class="box err"/>
+  <text x="795" y="384" class="h">DABERROR</text>
+  <text x="780" y="413" class="t">非法方向或非法模式</text>
+  <text x="780" y="435" class="s">需要先排查配置再恢复</text>
+
+  <path d="M565 460 C630 495 760 485 815 445" class="dash"/>
+  <text x="600" y="505" class="s">模式配置非法时进入错误状态</text>
+</svg>
