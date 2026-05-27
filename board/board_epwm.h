@@ -48,7 +48,6 @@ void Board_initEPWM(void);
  */
 void Board_EPWM_forceLowAll(void);       /* Force OST trip low / 强制 OST 关断为低 */
 void Board_EPWM_enableOutputs(void);     /* Clear OST if no fault / 无故障时清除 OST */
-void Board_EPWM_disableOutputs(void);    /* Re-force OST trip / 重新强制 OST */
 
 /* EPWM9 ADC trigger control.
  * EPWM9 ADC 触发控制。

@@ -2,6 +2,7 @@
 #include "device.h"
 #include "board/board.h"
 #include "control/ControlLoop.h"
+#include "comm/vofa_comm.h"
 
 /* Application entry.
  * 应用入口。
@@ -33,6 +34,8 @@ void main(void)
      * 板级硬件模块初始化。EPWM 初始化结束后保持强制低电平。
      */
     ControlLoop_init();
+    Board_SCIB_init(BOARD_SCIB_DEFAULT_BAUD);
+    VOFA_CommInit();
 
     /* EPWM9 hardware ADC trigger path.
      * EPWM9 硬件 ADC 触发链路。
@@ -46,6 +49,11 @@ void main(void)
      */
     Board_EPWM_initADCTrigger();
     Board_EPWM_enableADCTrigger();
+    
+    Board_EPWM_setDutyAll(0.5f);//设置占空比50%
+    gBoardSystem.pwm_output_enabled = true;//使能打开EPWM驱动
+    
+    //到这里还不会马上发，在下面的while里面发的
 
     /* Enable CPU global interrupt and realtime debug interrupt.
      * 使能 CPU 全局中断和实时调试中断。
@@ -56,7 +64,7 @@ void main(void)
     while (1)
     {
         /* Board-level PWM safety supervisor and non-realtime control task.
-         * 这里只运行板级 PWM 安全总控，不运行 SRCDAB 闭环控制。
+         * 这里只运行 PWM 总控，不运行 SRCDAB 闭环控制。
          */
         Board_SystemTask();
         ControlLoop_slowTask();

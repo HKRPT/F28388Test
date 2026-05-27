@@ -265,14 +265,6 @@ void ControlLoop_requestVoltagePIUpdate(void);
  */
 void ControlLoop_requestCurrentPIUpdate(void);
 
-/**
- * @brief 同时请求更新电压环和电流环 PI 参数。
- *
- * 输入：读取所有电压环、电流环 PI 参数全局变量。
- * 输出：两个 PI 控制器都会在 ISR 中更新。
- */
-void ControlLoop_requestAllPIUpdate(void);
-
 #ifdef __cplusplus
 }
 #endif

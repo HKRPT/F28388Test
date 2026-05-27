@@ -444,14 +444,6 @@ void Board_EPWM_enableOutputs(void)
     }
 }
 
-/* Disable PWM outputs by re-forcing TripZone one-shot.
- * 通过重新触发 TripZone one-shot 禁止 PWM 输出。
- */
-void Board_EPWM_disableOutputs(void)
-{
-    Board_EPWM_forceLowAll();
-}
-
 /* Configure EPWM9 ADCSOCA trigger source.
  * 配置 EPWM9 的 ADCSOCA 触发源。
  *

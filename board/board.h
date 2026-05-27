@@ -7,6 +7,7 @@
 #include "board/board_gpio.h"
 #include "board/board_epwm.h"
 #include "board/board_adc.h"
+#include "board/board_sci.h"
 
 #ifdef __cplusplus
 extern "C" {

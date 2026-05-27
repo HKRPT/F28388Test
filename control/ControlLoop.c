@@ -3,6 +3,7 @@
 #include "DCL.h"
 #include "DCLF32.h"
 #include "dab_bdps_opt.h"
+#include "comm/vofa_comm.h"
 
 /*==============================================================================
  * 文件结构
@@ -206,18 +207,6 @@ void ControlLoop_requestCurrentPIUpdate(void)//更新电流环
                                 gControlIpiKp, gControlIpiKi,
                                 gControlIpiUmax, gControlIpiUmin,
                                 gControlIpiImax, gControlIpiImin);
-}
-
-/**
- * @brief 同时请求更新电压环和电流环 PI 参数。
- *
- * 输入：所有电压环、电流环 PI 参数全局变量。
- * 输出：两个 PI 控制器都将在 ISR 中更新。
- */
-void ControlLoop_requestAllPIUpdate(void)
-{
-    ControlLoop_requestVoltagePIUpdate();
-    ControlLoop_requestCurrentPIUpdate();
 }
 
 /**
@@ -943,4 +932,25 @@ void ControlLoop_adcISR(void)
  */
 void ControlLoop_slowTask(void)//放mainwhile
 {
+    float vofaAdcData[6];
+
+    /* 
+    这里放接收上位机的数据的函数，如果接收标志位触发则进入
+    接收完之后ControlLoop_requestCurrentPIUpdate();申请一次更新请求
+    */
+
+    /*
+    这里放发送的函数，一直按照多通道去发常规发送六路ADC采样值，可以自己加
+    */
+    VOFA_CommRxTask();
+    VOFA_CommTask();
+
+    vofaAdcData[0] = gAdcCActual[0];
+    vofaAdcData[1] = gAdcCActual[1];
+    vofaAdcData[2] = gAdcCActual[2];
+    vofaAdcData[3] = gAdcDActual[0];
+    vofaAdcData[4] = gAdcDActual[1];
+    vofaAdcData[5] = gAdcDActual[2];
+
+    (void)VOFA_CommSendFloatFrame(vofaAdcData, 6U);
 }

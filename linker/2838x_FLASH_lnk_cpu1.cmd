@@ -74,7 +74,7 @@ SECTIONS
 
 #if defined(__TI_EABI__)
    .init_array      : > FLASH1, ALIGN(8)
-   .bss             : > RAMLS5
+   .bss             : >> RAMLS5 | RAMLS6
    .bss:output      : > RAMLS3
    .bss:cio         : > RAMLS5
    .data            : > RAMLS5
@@ -107,7 +107,7 @@ SECTIONS
    Difference_RegsFile : >RAMGS5, fill=0x3333
 
    #if defined(__TI_EABI__)
-       .TI.ramfunc : {} LOAD = FLASH3,
+       .TI.ramfunc : { *(.TI.ramfunc) *(dclfuncs) } LOAD = FLASH3,
                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                         LOAD_START(RamfuncsLoadStart),
                         LOAD_SIZE(RamfuncsLoadSize),
@@ -117,7 +117,7 @@ SECTIONS
                         RUN_END(RamfuncsRunEnd),
                         ALIGN(8)
    #else
-       .TI.ramfunc : {} LOAD = FLASH3,
+       .TI.ramfunc : { *(.TI.ramfunc) *(dclfuncs) } LOAD = FLASH3,
                         RUN = RAMLS0 | RAMLS1 | RAMLS2 |RAMLS3,
                         LOAD_START(_RamfuncsLoadStart),
                         LOAD_SIZE(_RamfuncsLoadSize),
