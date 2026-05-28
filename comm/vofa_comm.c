@@ -33,7 +33,6 @@ typedef struct
 } VOFA_CmdMap_t;
 
 static volatile float gVofaChannels[VOFA_COMM_CHANNEL_COUNT];
-static volatile uint16_t gVofaDecimationCnt;
 static volatile bool gVofaFramePending;
 
 static uint16_t gVofaTxBuffer[VOFA_COMM_FRAME_MAX_SIZE];
@@ -185,7 +184,6 @@ void VOFA_CommInit(void)
         gVofaChannels[i] = 0.0f;
     }
 
-    gVofaDecimationCnt = 0U;
     gVofaFramePending = false;
     gVofaTxLen = 0U;
     gVofaTxIndex = 0U;
@@ -250,13 +248,7 @@ void VOFA_CommSetChannels(const float *data, uint16_t count)
  */
 void VOFA_CommMarkFrameFromISR(void)
 {
-    gVofaDecimationCnt++;
-
-    if (gVofaDecimationCnt >= VOFA_COMM_SEND_DECIMATION)
-    {
-        gVofaDecimationCnt = 0U;
-        gVofaFramePending = true;
-    }
+    gVofaFramePending = true;
 }
 
 /* VOFA background communication task.

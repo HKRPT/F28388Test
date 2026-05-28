@@ -6,10 +6,14 @@
  */
 #define BOARD_EPWM_MIN_FREQ_HZ       2000UL
 #define BOARD_EPWM_MAX_FREQ_HZ       200000UL
+
 #define BOARD_EPWM_MAX_TBPRD         0x7FFFU
 #define BOARD_EPWM_MAX_DEADBAND_NS   5000U
+
 #define BOARD_PI_F                   3.14159265358979323846f
+
 #define PHASE_COUNT_MIN              0U
+
 #define PHASE_COUNT_MAX(tbprd)       ((uint16_t)(((tbprd) > 0U) ? \
                                       (2U * (tbprd) - 1U) : 0U))
 
@@ -389,8 +393,7 @@ void Board_initEPWM(void)
     uint16_t i;
 
     gEpwmTbprd = Board_EPWM_calcTBPRD(BOARD_PWM_DEFAULT_FREQ_HZ);
-    gEpwmDeadbandCount =
-        Board_EPWM_calcDeadbandCount(BOARD_PWM_DEFAULT_DEADBAND_NS);
+    gEpwmDeadbandCount = Board_EPWM_calcDeadbandCount(BOARD_PWM_DEFAULT_DEADBAND_NS);
 
     SysCtl_disablePeripheral(SYSCTL_PERIPH_CLK_TBCLKSYNC);
 

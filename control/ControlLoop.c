@@ -77,7 +77,7 @@ volatile float32_t gControlIpiUmin = -1.0f;
 //积分饱和极限
 volatile float32_t gControlIpiImax = 1.0f;
 volatile float32_t gControlIpiImin = -1.0f;
-
+//目标值
 volatile float32_t TempTargetVoltage;
 volatile float32_t TempTargetCurrent;
 
@@ -87,6 +87,7 @@ volatile float32_t TempTargetCurrent;
  * 电流 PI 仍然每个 ADC ISR 都运行，使用最近一次电压环输出作为电流参考。
  */
 static uint16_t gControlVoltageLoopCnt = 0U;
+static uint16_t gControlVofaSendCnt = 0U;
 
 
 CtrlLoop DABCtrl =  CtrlLoopDefaults;
@@ -624,16 +625,19 @@ void DABSoftStar(CtrlLoop *C)
     {
         return;
     }
+    // 防止空指针访问
 
     if (C->CSS->sts != DABREADYRUN)
     {
         return;
     }
+    //不是DABREADYRUN不进入
 
     if (C->SoftStar->SoftSTS == SoftOver)
     {
         return;
     }
+    //不是SoftOver不进入
 
     /* SoftTemp 只做正向幅值爬坡，S2P 的负号在控制器参考值处体现。 */
     if (C->SoftStar->SoftTemp >= C->SoftStar->SoftTarget)
@@ -836,12 +840,18 @@ static void ControlLoop_runMainCtrl(CtrlLoop *C)
  */
 void ControlLoop_adcISR(void)
 {
-
-    /*ADC数据处理放这里*/
-
-    Board_ADC_ConvertNormToActual();
-
-    /*ADC数据处理完*/
+    gControlVofaSendCnt++;
+    if (gControlVofaSendCnt >= VOFA_COMM_SEND_DECIMATION)
+    {
+        gControlVofaSendCnt = 0U;
+        VOFA_CommSetChannel(0U, gAdcCActual[0]);
+        VOFA_CommSetChannel(1U, gAdcCActual[1]);
+        VOFA_CommSetChannel(2U, gAdcCActual[2]);
+        VOFA_CommSetChannel(3U, gAdcDActual[0]);
+        VOFA_CommSetChannel(4U, gAdcDActual[1]);
+        VOFA_CommSetChannel(5U, gAdcDActual[2]);
+        VOFA_CommMarkFrameFromISR();
+    }
 
     /*此处进行过流保护*/
 
@@ -932,8 +942,6 @@ void ControlLoop_adcISR(void)
  */
 void ControlLoop_slowTask(void)//放mainwhile
 {
-    float vofaAdcData[6];
-
     /* 
     这里放接收上位机的数据的函数，如果接收标志位触发则进入
     接收完之后ControlLoop_requestCurrentPIUpdate();申请一次更新请求
@@ -944,13 +952,4 @@ void ControlLoop_slowTask(void)//放mainwhile
     */
     VOFA_CommRxTask();
     VOFA_CommTask();
-
-    vofaAdcData[0] = gAdcCActual[0];
-    vofaAdcData[1] = gAdcCActual[1];
-    vofaAdcData[2] = gAdcCActual[2];
-    vofaAdcData[3] = gAdcDActual[0];
-    vofaAdcData[4] = gAdcDActual[1];
-    vofaAdcData[5] = gAdcDActual[2];
-
-    (void)VOFA_CommSendFloatFrame(vofaAdcData, 6U);
 }

@@ -53,21 +53,21 @@
 #define BOARD_ADCD_D2_CHANNEL           ADC_CH_ADCIN2_ADCIN3
 #define BOARD_ADCD_D3_CHANNEL           ADC_CH_ADCIN4_ADCIN5
 
-volatile int16_t gAdcCRaw[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0};
+volatile int16_t gAdcCRaw[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0};//原始
 volatile int16_t gAdcDRaw[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0};
 
-volatile float gAdcCNorm[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
+volatile float gAdcCNorm[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};//归一化
 volatile float gAdcDNorm[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
 
-volatile float gAdcCVolt[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
+volatile float gAdcCVolt[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};//转换后电压值
 volatile float gAdcDVolt[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
 
-volatile float gAdcCActualOffset[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
-volatile float gAdcCActualScale[BOARD_ADC_DIFF_CHANNEL_COUNT]  = {1.0f, 1.0f, 1.0f};
+volatile float gAdcCActualOffset[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};//偏置
+volatile float gAdcCActualScale[BOARD_ADC_DIFF_CHANNEL_COUNT]  = {1.0f, 1.0f, 1.0f};//系数
 volatile float gAdcDActualOffset[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
-volatile float gAdcDActualScale[BOARD_ADC_DIFF_CHANNEL_COUNT]  = {1.0f, 1.0f, 1.0f};
+volatile float gAdcDActualScale[BOARD_ADC_DIFF_CHANNEL_COUNT]  = {1.0f, 1.0f, 1.0f};//系数
 
-volatile float gAdcCActual[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
+volatile float gAdcCActual[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};//实际值
 volatile float gAdcDActual[BOARD_ADC_DIFF_CHANNEL_COUNT] = {0.0f};
 
 volatile bool gAdcDNotReady = false;

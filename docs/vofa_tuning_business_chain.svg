@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="780" viewBox="0 0 1320 780">
+  <defs>
+    <style>
+      .bg { fill: #f7f9fc; }
+      .title { font: 700 30px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #132238; }
+      .subtitle { font: 15px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #506076; }
+      .lane { fill: #ffffff; stroke: #c8d2e1; stroke-width: 1.4; rx: 8; }
+      .laneTitle { font: 700 18px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #26364d; }
+      .box { fill: #ffffff; stroke: #9aa9bd; stroke-width: 1.5; rx: 8; }
+      .blue { fill: #e8f2ff; stroke: #4f86c6; }
+      .green { fill: #eaf8ef; stroke: #58a36d; }
+      .amber { fill: #fff5df; stroke: #c6932f; }
+      .red { fill: #fff0f0; stroke: #c96363; }
+      .violet { fill: #f2edff; stroke: #8168c8; }
+      .gray { fill: #f4f6fa; stroke: #9aa9bd; }
+      .h { font: 700 16px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #18283f; }
+      .t { font: 14px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #2c3a50; }
+      .s { font: 12.5px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #5b687a; }
+      .arrow { stroke: #42526a; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #6e7d91; stroke-width: 2; fill: none; stroke-dasharray: 7 6; marker-end: url(#arrow); }
+      .thin { stroke: #9aa9bd; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#42526a" />
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1320" height="780" />
+  <text x="40" y="50" class="title">VOFA 调参与 DAB 控制业务链</text>
+  <text x="42" y="78" class="subtitle">测试人员关注：命令从 VOFA 进入后写哪个变量，变量在哪个 ISR 生效，波形从哪里回传。</text>
+
+  <rect x="32" y="110" width="1256" height="210" class="lane" />
+  <text x="52" y="140" class="laneTitle">采样 / 控制 ISR</text>
+
+  <rect x="62" y="170" width="145" height="82" class="box blue" />
+  <text x="90" y="202" class="h">EPWM9 SOCA</text>
+  <text x="82" y="226" class="s">每 PWM 周期触发</text>
+
+  <rect x="248" y="170" width="155" height="82" class="box blue" />
+  <text x="287" y="202" class="h">ADCC / ADCD</text>
+  <text x="274" y="226" class="s">六路差分采样</text>
+
+  <rect x="444" y="160" width="185" height="102" class="box green" />
+  <text x="486" y="194" class="h">adcc1ISR()</text>
+  <text x="470" y="218" class="s">读取 ADC 结果</text>
+  <text x="470" y="240" class="s">换算 Norm/Volt/Actual</text>
+
+  <rect x="670" y="160" width="210" height="102" class="box green" />
+  <text x="704" y="194" class="h">ControlLoop_adcISR()</text>
+  <text x="704" y="218" class="s">保护 / 目标同步</text>
+  <text x="704" y="240" class="s">PI 更新 / 软启动 / 闭环</text>
+
+  <rect x="930" y="160" width="175" height="102" class="box amber" />
+  <text x="960" y="194" class="h">调制算法</text>
+  <text x="956" y="218" class="s">SPS / EPS / BDPS</text>
+  <text x="956" y="240" class="s">输出相位命令</text>
+
+  <rect x="1145" y="170" width="115" height="82" class="box red" />
+  <text x="1164" y="202" class="h">ePWM 相位</text>
+  <text x="1163" y="226" class="s">四桥臂输出</text>
+
+  <path d="M207 211 H248" class="arrow" />
+  <path d="M403 211 H444" class="arrow" />
+  <path d="M629 211 H670" class="arrow" />
+  <path d="M880 211 H930" class="arrow" />
+  <path d="M1105 211 H1145" class="arrow" />
+
+  <rect x="32" y="350" width="1256" height="250" class="lane" />
+  <text x="52" y="380" class="laneTitle">VOFA 下发参数 / 主循环慢任务</text>
+
+  <rect x="62" y="420" width="165" height="98" class="box violet" />
+  <text x="100" y="452" class="h">VOFA+</text>
+  <text x="83" y="477" class="s">AA + 命令 + 数值 + BB</text>
+  <text x="83" y="499" class="s">例：AAVP0.02BB</text>
+
+  <rect x="275" y="420" width="195" height="98" class="box violet" />
+  <text x="318" y="452" class="h">SCIB / CH340</text>
+  <text x="310" y="477" class="s">GPIO9 TX / GPIO11 RX</text>
+  <text x="330" y="499" class="s">921600, 8N1</text>
+
+  <rect x="520" y="410" width="220" height="118" class="box amber" />
+  <text x="566" y="442" class="h">VOFA_CommRxTask()</text>
+  <text x="552" y="468" class="s">轮询 SCIB RX FIFO</text>
+  <text x="552" y="490" class="s">解析 AA&lt;cmd&gt;&lt;value&gt;BB</text>
+  <text x="552" y="512" class="s">只接受非负十进制数</text>
+
+  <rect x="790" y="392" width="210" height="70" class="box green" />
+  <text x="826" y="424" class="h">PI 命令 VP/VI/IP/II</text>
+  <text x="827" y="448" class="s">写 gControl*，请求 DCL 更新</text>
+
+  <rect x="790" y="486" width="210" height="70" class="box green" />
+  <text x="842" y="518" class="h">目标命令 VT/IT</text>
+  <text x="817" y="542" class="s">写 TempTarget*，置 WAITCHANGE</text>
+
+  <rect x="1052" y="392" width="205" height="164" class="box gray" />
+  <text x="1090" y="424" class="h">下一次 ISR 生效</text>
+  <text x="1082" y="452" class="s">DCL_updatePI(&amp;VPI/IPI)</text>
+  <text x="1082" y="478" class="s">DABCtrl.TargetVoltage</text>
+  <text x="1082" y="502" class="s">DABCtrl.TargetCurrent</text>
+  <text x="1082" y="528" class="s">再进入软启动或闭环</text>
+
+  <path d="M227 469 H275" class="arrow" />
+  <path d="M470 469 H520" class="arrow" />
+  <path d="M740 448 H790" class="arrow" />
+  <path d="M740 490 H790" class="arrow" />
+  <path d="M1000 427 H1052" class="arrow" />
+  <path d="M1000 521 H1052" class="arrow" />
+  <path d="M1154 392 C1130 330 900 308 775 262" class="dash" />
+
+  <rect x="32" y="630" width="1256" height="112" class="lane" />
+  <text x="52" y="660" class="laneTitle">VOFA 波形回传</text>
+
+  <rect x="86" y="680" width="235" height="46" class="box blue" />
+  <text x="110" y="708" class="t">ISR 每 100 次填 ch0~ch5 并置 pending</text>
+
+  <rect x="408" y="680" width="230" height="46" class="box green" />
+  <text x="438" y="708" class="t">VOFA_CommTask() 复制 8 路通道</text>
+
+  <rect x="724" y="680" width="220" height="46" class="box violet" />
+  <text x="756" y="708" class="t">JustFloat：8*4 + 帧尾 = 36B</text>
+
+  <rect x="1030" y="680" width="170" height="46" class="box red" />
+  <text x="1068" y="708" class="t">VOFA 显示波形</text>
+
+  <path d="M321 703 H408" class="arrow" />
+  <path d="M638 703 H724" class="arrow" />
+  <path d="M944 703 H1030" class="arrow" />
+  <path d="M198 680 C260 600 500 555 626 528" class="thin" />
+</svg>

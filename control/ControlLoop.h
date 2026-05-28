@@ -125,8 +125,8 @@ typedef struct
     float32_t TargetVoltage;           /**< 目标电压，单位 V */
     float32_t TargetCurrent;           /**< 目标电流，单位 A */
 
-    uint32_t sts;                      /**< 当前 DABSTS 状态 */
-    uint32_t error;                    /**< 控制错误标志 */
+    uint32_t sts;                      /**< 当前 DABSTS 状态  四个状态*/
+    uint32_t error;                    /**< 控制错误标志，过流 */
     uint32_t CtrlMode;                 /**< 调制模式，取 enum CtrlMode */
     uint32_t CtrlLoopTransmissionMode; /**< 功率方向，取 enum CtrlLoopTransmissionMode */
     uint32_t LoopMode;                 /**< 闭环模式，取 enum LoopMode */

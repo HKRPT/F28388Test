@@ -45,6 +45,7 @@ __interrupt void adcc1ISR(void)
     if (adcdComplete)
     {
         gAdcDNotReady = false;
+        /*进行实际值转换*/
         Board_ADC_UpdateCacheFromResult();
 
         ControlLoop_adcISR();

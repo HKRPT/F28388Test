@@ -72,10 +72,10 @@ void VOFA_CommSetChannels(const float *data, uint16_t count);
  * Output:
  *   None.
  *
- * This function only updates a counter and a flag. It does not send data and
- * must not block.
+ * This function only sets a pending flag. It does not send data and must not
+ * block.
  *
- * 本函数只更新计数器和标志位，不发送数据，也不能阻塞。
+ * 本函数只置位 pending 标志，不发送数据，也不能阻塞。
  */
 void VOFA_CommMarkFrameFromISR(void);
 
