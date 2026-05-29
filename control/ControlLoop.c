@@ -484,8 +484,6 @@ void ControlLoop_init(void)//中断初始化
     DABCtrl.CSS = &DABCSS;
     DABCtrl.SoftStar = &DABSoftStart;
 
-    DABCSS.TargetVoltage = TempTargetVoltage;
-    DABCSS.TargetCurrent = TempTargetCurrent;
     DABCSS.sts = DABREADYRUN;
     DABCSS.error = 0U;
     DABCSS.CtrlMode = SPSDAB;
@@ -873,8 +871,6 @@ void ControlLoop_adcISR(void)
          */
         DABCtrl.TargetVoltage = TempTargetVoltage;
         DABCtrl.TargetCurrent = TempTargetCurrent;
-        DABCSS.TargetVoltage = TempTargetVoltage;
-        DABCSS.TargetCurrent = TempTargetCurrent;
         DABCSS.error = 0U;
 
         /*

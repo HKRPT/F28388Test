@@ -92,7 +92,6 @@ VOFA 命令
   -> DABCSS.sts = DABWAITCHANGE
   -> 下一次 ControlLoop_adcISR()
   -> DABCtrl.TargetVoltage / DABCtrl.TargetCurrent
-  -> DABCSS.TargetVoltage / DABCSS.TargetCurrent
 ```
 
 运行中只改 `VT` 或 `IT` 不会重新从 0 软启动。如果软启动已经结束，状态会回到 `DABRUNING`；如果软启动还没结束，会继续保持 `DABREADYRUN`。

@@ -114,7 +114,6 @@ enum SoftStaut
  * @brief 控制状态选择结构体。
  *
  * 输入：
- *   TargetVoltage / TargetCurrent 由临时目标值同步得到。
  *   CtrlMode / CtrlLoopTransmissionMode / LoopMode 由用户配置。
  *
  * 输出：
@@ -122,9 +121,6 @@ enum SoftStaut
  */
 typedef struct
 {
-    float32_t TargetVoltage;           /**< 目标电压，单位 V */
-    float32_t TargetCurrent;           /**< 目标电流，单位 A */
-
     uint32_t sts;                      /**< 当前 DABSTS 状态  四个状态*/
     uint32_t error;                    /**< 控制错误标志，过流 */
     uint32_t CtrlMode;                 /**< 调制模式，取 enum CtrlMode */
@@ -202,7 +198,7 @@ typedef struct
  * 4. 默认初始化值
  *============================================================================*/
 
-#define CTRLCSSDefaults  {0.0f, 0.0f, DABREADYRUN, 0U, SPSDAB, P2S, VMode}
+#define CTRLCSSDefaults  {DABREADYRUN, 0U, SPSDAB, P2S, VMode}
 #define CtrlLoopDefaults {0.0f, 0.0f, 0.0f, 0.0f, NULL_ADDR, NULL_ADDR}
 #define DAB_OVERLOADDefaults {1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f}
 
